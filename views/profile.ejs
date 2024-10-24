@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= user.username %>'s Profile</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="icon" type="image/x-icon" href="/imgs/favicon.ico">
+
+
+    <style>
+
+        .main-content {
+            margin-left: 60px;
+            padding: 20px;
+            display: flex;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-content {
+            margin-left: 20px;
+        }
+
+        .profile-nav button {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .active-tab {
+            font-weight: bold;
+            border-bottom: 2px solid #4a90e2;
+        }
+
+        .tweet-actions i {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <ul class="sidebar-menu">
+                    <li><img src="/imgs/logo.png" alt="Logo" class="logo" /></li>
+                    <li><a href="/tweets"><i class="fa-solid fa-house"></i></a></li>
+                    <li><a href="#"><i class="fa-solid fa-user"></i></a></li>
+                    <li><a href="mailto:ellentomlins2026@u.northwestern.edu"><i class="fa-solid fa-envelope"></i></a></li>
+                </ul>
+            </div>
+
+            <!-- main Content -->
+            <div class="main-content col-md-10">
+                <div class="profile-header">
+                    <img src="/imgs/prof_pics/profile-pic-1.png" alt="Profile Picture" class="profile-pic-profile">
+                        <button id="follow-button" data-user-id="<%= currUserId %>" data-target-id="<%= userId %>">
+                            Follow
+                        </button>
+                      
+                    <div class="profile-content">
+                        <h1><%= user.username %></h1> 
+                        <p>This is your bio because Ellon Musk hasn't implemented bios yet muahahahaha.</p>
+                        <div class="container " style="display: flex;gap: 10px;color: transparent; background-color: transparent; border-color: transparent;">
+                            <p><button class="btn" data-toggle="modal" data-target="#followersModal" style="color:white">Followers</button></p>
+                            <p><button class="btn " data-toggle="modal" data-target="#followingModal" style="color:white">Following</button></p>
+                        </div>
+                        
+                        <!-- followers modal -->
+                        <div class="modal fade" id="followersModal" tabindex="-1" role="dialog" aria-labelledby="followersModalLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="followersModalLabel">Followers</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                <ul>
+                                  <% user.followers.forEach(follower => { %>
+                                      <li><a href="/users/<%= follower._id %>"><%= follower.username %></a></li>
+                                  <% }) %>
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <!-- following modal -->
+                        <div class="modal fade" id="followingModal" tabindex="-1" role="dialog" aria-labelledby="followingModalLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="followingModalLabel">Following</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                <ul>
+                                  <% user.following.forEach(followedUser => { %>
+                                      <li><a href="/users/<%= followedUser._id %>"><%= followedUser.username %></a></li>
+                                  <% }) %>
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                 </div>
+                </div>
+
+                <div class="profile-nav">
+                    <button id="posts-tab" class="active-tab">Posts</button>
+                    <button id="likes-tab">Likes</button>
+                </div>
+
+                <div id="posts-container">
+                    <% if (tweets && tweets.length > 0) { %>
+                        <% tweets.forEach(function(post) { %>
+                            <div class="card border-0">
+                                <div class="card-body">
+                                    <div class="post-header">
+                                        <img src="/imgs/prof_pics/profile-pic-1.png" alt="Profile Picture" class="profile-pic" />
+                                        <h2>
+                                            <a href="/users/<%= post.authorId.username %>">
+                                                <%= post.authorId.username %>
+                                            </a>
+                                        </h2>
+                                    </div>
+                                    <p class="card-text"><%= post.content %></p>
+                                    <div class="tweet-actions">
+                                        <button class="like-button" data-tweet-id="<%= post._id %>">
+                                            <i class="fas fa-heart"></i> 
+                                            <span class="like-count"><%= post.likes ? post.likes.length : 0 %></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <p class="text-muted text-center">This user has no tweets yet.</p>
+                    <% } %>
+                </div>
+
+                <div id="likes-content" class="d-none">
+                    <% likedTweets.forEach(tweet => { %>
+                        <div class="tweet">
+                            <h3><%= tweet.authorId.username %> @<%= tweet.authorId.username %></h3>
+                            <p><%= tweet.content %></p>
+                            <div class="tweet-actions">
+                                <i class="fas fa-comment"></i> 1
+                                <i class="fas fa-retweet"></i>
+                                <i class="fas fa-heart"></i> <%= tweet.likes.length %>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const postsTab = document.getElementById('posts-tab');
+        const likesTab = document.getElementById('likes-tab');
+        const postsContainer = document.getElementById('posts-container');
+        const likesContent = document.getElementById('likes-content');
+
+        postsTab.addEventListener('click', () => {
+            postsContainer.classList.remove('d-none');
+            likesContent.classList.add('d-none');
+            postsTab.classList.add('active-tab');
+            likesTab.classList.remove('active-tab');
+        });
+
+        likesTab.addEventListener('click', () => {
+            likesContent.classList.remove('d-none');
+            postsContainer.classList.add('d-none');
+            likesTab.classList.add('active-tab');
+            postsTab.classList.remove('active-tab');
+        });
+     
+    const followButton = document.getElementById('follow-button');
+
+    followButton.addEventListener('click', async () => {
+    const userId = followButton.getAttribute('data-user-id'); 
+    const targetUserId = followButton.getAttribute('data-target-id'); 
+
+    try {
+        const response = await fetch(`/users/${userId}/followings`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify({ targetUserId }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+        if (followButton.textContent === 'Follow') {
+            followButton.textContent = 'Unfollow';
+            followButton.classList.add('unfollow'); 
+        } else {
+            followButton.textContent = 'Follow';
+            followButton.classList.remove('unfollow');
+        }
+        } else {
+        console.error(result.error);
+        }
+    } catch (error) {
+        console.error('Error toggling follow status:', error);
+    }
+    });
+
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+</body>
+</html>
