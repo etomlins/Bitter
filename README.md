@@ -6,5 +6,5 @@ Forget the sordid past of Twitter, victim to the capricious will of Elon Musk. E
 
 So come on over (not tweet, but) bleat to your heart's content.
 
-![Bitter demo gif](https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif)
+![Bitter demo gif](bitter-demo.gif)
 
