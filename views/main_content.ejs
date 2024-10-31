@@ -153,22 +153,19 @@
 
         document.addEventListener('DOMContentLoaded', assignRandomProfilePics);
 
-        const username = "<%= currentUsername %>"; 
-        const text = `${username}, what's not happening?`;
-        const textarea = document.getElementById('tweet-input');
-        let index = 0;
-
         function typeWriter() {
-            if (index < text.length) {
-                textarea.setAttribute('placeholder', text.substring(0, index + 1));
-                index++;
-                setTimeout(typeWriter, 100); 
+            const username = "<%= currentUsername %>"; 
+            const text = `${username}, what's not happening?`;
+            const textarea = document.getElementById('tweet-input'); 
+
+            for (i in Range(text.length)) {
+                textarea.setAttribute('placeholder', text.substring(0, i + 1));
+                setTimeout(() => {}, 100);
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            typeWriter();
-        });
+        document.addEventListener('DOMContentLoaded', typeWriter);
+        
 
         document.querySelectorAll('.like-button').forEach(button => {
             button.addEventListener('click', async () => {
